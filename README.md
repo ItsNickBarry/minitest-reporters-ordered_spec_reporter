@@ -30,7 +30,8 @@ For more information, see the [minitest-reporters documentation](https://github.
 
 The constructor accepts the following options:
 
-|option|description|
-|-|-|
-| `:indentation` | number of indentations to apply to top level test class reports |
-| `:spaces` | number of spaces per indentation level |
+| option | description | default |
+|-|-|-|
+| `:indentation` | number of indentations to apply to top level test class reports | `0` |
+| `:spaces` | number of spaces per indentation level | `2` |
+| `:truncate` | whether to remove the `test_####_` prefix from each test name | `true` |

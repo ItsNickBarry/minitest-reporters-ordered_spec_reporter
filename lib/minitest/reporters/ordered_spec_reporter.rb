@@ -11,6 +11,7 @@ module Minitest
         super
         @indentation = options[:indentation] || 0
         @spaces = options[:spaces] || 2
+        @truncate = options[:truncate] || true
       end
 
       def start
@@ -35,7 +36,8 @@ module Minitest
         end
 
         tree.sort.to_h.each { |k, v| print_suite(k, v) }
-
+        
+        puts
         puts('Finished in %.5fs' % total_time)
         print('%d tests, %d assertions, ' % [count, assertions])
         color = failures.zero? && errors.zero? ? :green : :red
@@ -69,6 +71,7 @@ module Minitest
 
       def record_print_status(test)
         test_name = test.name.gsub(/^test_: /, 'test:')
+        test_name = test_name.gsub(/^test_\d*_/, '') if @truncate
         print pad_test(test_name)
         print_colored_status(test)
         print(" (%.2fs)" % test.time) unless test.time.nil?
