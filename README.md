@@ -25,3 +25,12 @@ Minitest::Reporters.use! Minitest::Reporters::OrderedSpecReporter.new
 ```
 
 For more information, see the [minitest-reporters documentation](https://github.com/kern/minitest-reporters).
+
+### Options
+
+The constructor accepts the following options:
+
+|option|description|
+|-|-|
+| `:indentation` | number of indentations to apply to top level test class reports |
+| `:spaces` | number of spaces per indentation level |

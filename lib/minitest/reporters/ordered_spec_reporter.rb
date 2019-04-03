@@ -7,6 +7,12 @@ module Minitest
       include ANSI::Code
       include RelativePosition
 
+      def initialize options = {}
+        super
+        @indentation = options[:indentation] || 0
+        @spaces = options[:spaces] || 2
+      end
+
       def start
         super
         puts('Started with run options %s' % options[:args])
@@ -40,20 +46,20 @@ module Minitest
 
       protected
 
-      def print_suite(name, branch, depth = 0)
+      def print_suite(name, branch, indentation = @indentation)
         branch = branch.sort.to_h
-        puts ' ' * depth * 2 + name unless name.nil?
+        puts ' ' * indentation * @spaces + name unless name.nil?
 
         (branch[:tests] || []).each do |test|
-          print ' ' * depth * 2
+          print ' ' * indentation * @spaces
           print_test(test)
         end
 
         branch.each do |k, v|
-          print_suite k, v, depth + 1 unless k == :tests
+          print_suite k, v, indentation + 1 unless k == :tests
         end
 
-        puts if depth == 0
+        puts if indentation == 0
       end
 
       def print_test(test)
