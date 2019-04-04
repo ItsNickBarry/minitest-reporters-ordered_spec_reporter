@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    minitest-reporters-ordered_spec_reporter (1.0.0)
+    minitest-reporters-ordered_spec_reporter (1.1.0)
       minitest-reporters (~> 1.3.6)
 
 GEM
