@@ -8,10 +8,14 @@ module Minitest
       include RelativePosition
 
       def initialize options = {}
-        super
-        @indentation = options[:indentation] || 0
-        @spaces = options[:spaces] || 2
-        @truncate = options[:truncate] || true
+        super(options)
+
+        @options = {
+          indentation: 0,
+          spaces: 2,
+          truncate: false,
+          loose: false,
+        }.merge(options)
       end
 
       def start
@@ -36,8 +40,8 @@ module Minitest
         end
 
         tree.sort.to_h.each { |k, v| print_suite(k, v) }
-        
-        puts
+
+        puts unless @options[:loose] # already printed by last suite if true
         puts('Finished in %.5fs' % total_time)
         print('%d tests, %d assertions, ' % [count, assertions])
         color = failures.zero? && errors.zero? ? :green : :red
@@ -48,20 +52,24 @@ module Minitest
 
       protected
 
-      def print_suite(name, branch, indentation = @indentation)
+      def print_suite(name, branch, indentation = @options[:indentation])
         branch = branch.sort.to_h
-        puts ' ' * indentation * @spaces + name unless name.nil?
 
-        (branch[:tests] || []).each do |test|
-          print ' ' * indentation * @spaces
-          print_test(test)
+        total_indentation = ' ' * indentation * @options[:spaces]
+
+        puts total_indentation + name unless name.nil?
+
+        if branch[:tests]
+          branch[:tests].each do |test|
+            print total_indentation
+            print_test(test)
+          end
+          puts if @options[:loose]
         end
 
         branch.each do |k, v|
           print_suite k, v, indentation + 1 unless k == :tests
         end
-
-        puts if indentation == 0
       end
 
       def print_test(test)
@@ -71,7 +79,7 @@ module Minitest
 
       def record_print_status(test)
         test_name = test.name.gsub(/^test_: /, 'test:')
-        test_name = test_name.gsub(/^test_\d*_/, '') if @truncate
+        test_name = test_name.gsub(/^test_\d*_/, '') if @options[:truncate]
         print pad_test(test_name)
         print_colored_status(test)
         print(" (%.2fs)" % test.time) unless test.time.nil?
