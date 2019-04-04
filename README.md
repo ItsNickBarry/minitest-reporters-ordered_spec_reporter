@@ -2,7 +2,7 @@
 
 Modified version of `Minitest::Reporters::SpecReporter` which prints test results in alphabetical order, grouped by test class.
 
-This gem makes use of the 'minitest-reporters' library.  It modifies the test reporting order, but not Minitest's randomized test execution order.
+This gem makes use of the `minitest-reporters` library.  It modifies the test reporting order, but not Minitest's randomized test execution order.
 
 ## Installation
 
