@@ -62,8 +62,11 @@ module Minitest
           branch[:tests].each do |test|
             print_test(test, indentation)
           end
+
           puts if options[:loose]
+          branch.delete :tests
         end
+
 
         branch.sort.to_h.each do |k, v|
           print_suite k, v, indentation unless k == :tests
