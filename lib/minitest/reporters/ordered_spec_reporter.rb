@@ -13,6 +13,7 @@ module Minitest
         @options = {
           indentation: 0,
           spaces: 2,
+          justification: TEST_SIZE + TEST_PADDING, # match output of SpecReporter
           truncate: false,
           loose: false,
         }.merge(options)
@@ -53,34 +54,31 @@ module Minitest
       protected
 
       def print_suite(name, branch, indentation = @options[:indentation])
-        branch = branch.sort.to_h
+        puts pad_string(name, indentation) unless name.nil?
 
-        total_indentation = ' ' * indentation * @options[:spaces]
-
-        puts total_indentation + name unless name.nil?
+        indentation += 1
 
         if branch[:tests]
           branch[:tests].each do |test|
-            print total_indentation
-            print_test(test)
+            print_test(test, indentation)
           end
           puts if @options[:loose]
         end
 
-        branch.each do |k, v|
-          print_suite k, v, indentation + 1 unless k == :tests
+        branch.sort.to_h.each do |k, v|
+          print_suite k, v, indentation unless k == :tests
         end
       end
 
-      def print_test(test)
-        record_print_status(test)
+      def print_test(test, indentation)
+        record_print_status(test, indentation)
         record_print_failures_if_any(test)
       end
 
-      def record_print_status(test)
+      def record_print_status(test, indentation)
         test_name = test.name.gsub(/^test_: /, 'test:')
         test_name = test_name.gsub(/^test_\d*_/, '') if @options[:truncate]
-        print pad_test(test_name)
+        print pad_string(test_name, indentation)
         print_colored_status(test)
         print(" (%.2fs)" % test.time) unless test.time.nil?
         puts
@@ -91,6 +89,10 @@ module Minitest
           print_info(test.failure, test.error?)
           puts
         end
+      end
+
+      def pad_string(str, indentation)
+        (' ' * indentation * @options[:spaces] + str).ljust(@options[:justification])
       end
     end
   end

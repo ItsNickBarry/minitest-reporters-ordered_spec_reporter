@@ -36,5 +36,6 @@ The constructor accepts the following options:
 |-|-|-|
 | `:indentation` | number of indentations to apply to top level test class reports | `0` |
 | `:spaces` | number of spaces per indentation level | `2` |
+| `:justification` | width of the test description column | `65` (aligns with default `SpecReporter`)|
 | `:truncate` | whether to remove the `test_####_` prefix from each test name | `false` |
 | `:loose` | whether to add a blank line after each group of tests | `false` |
