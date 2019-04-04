@@ -7,16 +7,16 @@ module Minitest
       include ANSI::Code
       include RelativePosition
 
-      def initialize options = {}
-        super(options)
+      @@default_options = {
+        indentation: 0,
+        spaces: 2,
+        justification: TEST_SIZE + TEST_PADDING, # match output of SpecReporter
+        truncate: false,
+        loose: false,
+      }
 
-        @options = {
-          indentation: 0,
-          spaces: 2,
-          justification: TEST_SIZE + TEST_PADDING, # match output of SpecReporter
-          truncate: false,
-          loose: false,
-        }.merge(options)
+      def initialize options = {}
+        super(@@default_options.merge(options))
       end
 
       def start
@@ -42,7 +42,7 @@ module Minitest
 
         tree.sort.to_h.each { |k, v| print_suite(k, v) }
 
-        puts unless @options[:loose] # already printed by last suite if true
+        puts unless options[:loose] # already printed by last suite if true
         puts('Finished in %.5fs' % total_time)
         print('%d tests, %d assertions, ' % [count, assertions])
         color = failures.zero? && errors.zero? ? :green : :red
@@ -53,7 +53,7 @@ module Minitest
 
       protected
 
-      def print_suite(name, branch, indentation = @options[:indentation])
+      def print_suite(name, branch, indentation = options[:indentation])
         puts pad_string(name, indentation) unless name.nil?
 
         indentation += 1
@@ -62,7 +62,7 @@ module Minitest
           branch[:tests].each do |test|
             print_test(test, indentation)
           end
-          puts if @options[:loose]
+          puts if options[:loose]
         end
 
         branch.sort.to_h.each do |k, v|
@@ -77,7 +77,7 @@ module Minitest
 
       def record_print_status(test, indentation)
         test_name = test.name.gsub(/^test_: /, 'test:')
-        test_name = test_name.gsub(/^test_\d*_/, '') if @options[:truncate]
+        test_name = test_name.gsub(/^test_\d*_/, '') if options[:truncate]
         print pad_string(test_name, indentation)
         print_colored_status(test)
         print(" (%.2fs)" % test.time) unless test.time.nil?
@@ -92,7 +92,7 @@ module Minitest
       end
 
       def pad_string(str, indentation)
-        (' ' * indentation * @options[:spaces] + str).ljust(@options[:justification])
+        (' ' * indentation * options[:spaces] + str).ljust(options[:justification])
       end
     end
   end
