@@ -1,3 +1,4 @@
+require 'ansi/code'
 require 'minitest/reporters'
 
 module Minitest
@@ -13,6 +14,11 @@ module Minitest
         justification: TEST_SIZE + TEST_PADDING, # match output of SpecReporter
         truncate: false,
         loose: false,
+        color: {
+          suite: :yellow,
+          test: :cyan,
+          match: {},
+        },
       }
 
       def initialize options = {}
@@ -54,7 +60,7 @@ module Minitest
       protected
 
       def print_suite(name, branch, indentation = options[:indentation])
-        puts pad_string(name, indentation) unless name.nil?
+        puts colorize(name, :suite) + pad_string(name, indentation) unless name.nil?
 
         indentation += 1
 
@@ -81,7 +87,7 @@ module Minitest
       def record_print_status(test, indentation)
         test_name = test.name.gsub(/^test_: /, 'test:')
         test_name = test_name.gsub(/^test_\d*_/, '') if options[:truncate]
-        print pad_string(test_name, indentation)
+        print colorize(test.name, :test) + pad_string(test_name, indentation)
         print_colored_status(test)
         print(" (%.2fs)" % test.time) unless test.time.nil?
         puts
@@ -96,6 +102,20 @@ module Minitest
 
       def pad_string(str, indentation)
         (' ' * indentation * options[:spaces] + str).ljust(options[:justification])
+      end
+
+      def colorize(name, type)
+        return '' unless options[:color]
+
+        color = nil
+
+        (options[:color][:match] || []).find do |regexp, color_code|
+          color = color_code if regexp.is_a?(Regexp) && name.match(regexp)
+        end
+
+        color ||= options[:color][type]
+
+        color ? ANSI::Code[color] : ''
       end
     end
   end
