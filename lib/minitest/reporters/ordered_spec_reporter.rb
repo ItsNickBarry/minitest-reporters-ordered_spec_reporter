@@ -65,7 +65,7 @@ module Minitest
         indentation += 1
 
         if branch[:tests]
-          branch[:tests].each do |test|
+          branch[:tests].sort_by { |t| t.name }.each do |test|
             print_test(test, indentation)
           end
 
