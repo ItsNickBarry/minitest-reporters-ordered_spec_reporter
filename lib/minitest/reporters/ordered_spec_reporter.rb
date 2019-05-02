@@ -39,7 +39,7 @@ module Minitest
         self.tests.each do |test|
           branch = tree
 
-          test.klass.split(/\b::/).each do |klass|
+          test.klass.split(/(?<!:)::/).each do |klass|
             branch = (branch[klass] ||= {})
           end
 
